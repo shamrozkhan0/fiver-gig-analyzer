@@ -6,7 +6,7 @@ for your gig to get rank and attract clients.
 ### Tech-Stack:
 - Backend:
     - Language: Python
-    - Library: Pandas, Matplotlib, selenium, fastapi, beautifulsoup
+    - Library: Pandas, Matplotlib, fastapi
 - Frontend:
      - Framework: ReactJS
 - Database:
@@ -14,6 +14,7 @@ for your gig to get rank and attract clients.
 
 ---
 
-#### System Design:
+#### Work-Flow:
+![System Flow Diagram](public/System-flow.png)
 
 
