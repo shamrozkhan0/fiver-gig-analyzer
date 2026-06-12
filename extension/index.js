@@ -8,98 +8,160 @@ document.getElementById("btn").addEventListener("click", async () => {
         const results = await chrome.scripting.executeScript({
             target: { tabId: tab.id },
             func: () => {
+
+                const safeText = (el) =>
+                    el ? el.innerText.trim() : "Not Found in Gig";
+
+                const safeStyle = (el, color = "#00ff43") => {
+                    if (el) el.style.background = color;
+                };
+
                 const title = document.querySelector("h1");
-                title.style.background = "#00ff43";
-
                 const description = document.querySelector("div.description-wrapper");
-                description.style.background = "#00ff43";
+                const experties = document.querySelector("ul.metadata");
+                const categoryAndSubcategory = document.querySelector("ol.m2d0eb0");
 
-                const experties = document.querySelector("ul.metadata")
-                experties.style.background = "#00ff43";
+                safeStyle(title);
+                safeStyle(description);
+                safeStyle(experties);
+                safeStyle(categoryAndSubcategory);
 
-                const categoryAndSubcategory = document.querySelector("ol.m2d0eb0")
-                categoryAndSubcategory.style.background = "#00ff43";
-
+                // Package handling safely
                 const packageTabs = document.querySelectorAll(
                     "div.packages-tabs div.nav-container label"
                 );
+
+                // safeStyle(packageTabs)
+
+                const packages = {};
+
+                try {
+                    packageTabs.forEach((tab) => {
+                        if (!tab) return;
+
+                        tab.click();
+
+                        const content = document.querySelector(
+                            "div.packages-tabs div.package-content"
+                        );
+
+                        safeStyle(content)
+
+                        packages[tab.innerText.trim()] = {
+                            content: safeText(content)
+                        };
+                    });
+                } catch (e) {
+                    console.log("Package extraction error:", e);
+                }
 
                 const item = document.querySelector(".collapsable-package-item");
                 const header = item?.querySelector(".collapsable-header");
 
                 if (item?.classList.contains("collapsed") || header?.classList.contains("collapsed")) {
                     console.log("Section is closed → opening");
-                    header.click();
+                    header?.click();
                 }
-                const packages = {};
 
-                packageTabs.forEach((tab, index) => {
-                    tab.click();
-
-                    packages[tab.innerText.trim()] = {
-                        content: document.querySelector("div.packages-tabs div.package-content").innerText.trim()
-                    };
-                });
-
-                console.log("this is package: " + packages);
-
-
-                packages.style.background = "#00ff43";
-
-                const userProfileDescrption = document.querySelector("article.seller-desc")
-                userProfileDescrption.style.background = "#00ff43"
-
+                const userProfileDescrption = document.querySelector("article.seller-desc");
                 const tags = document.querySelector("div.gig-tags-container ul");
-                tags.style.background = "#00ff40"
-
                 const rating = document.querySelector("div.ranking");
-                rating.style.background = "#00ff40"
 
+                safeStyle(userProfileDescrption, "#00ff43");
+                safeStyle(tags, "#00ff40");
+                safeStyle(rating, "#00ff40");
+
+                const totalReview = document.querySelector("header.reviews-header div.details")
+                safeStyle(totalReview)
+
+
+
+                const starReviews = {}
+
+                try {
+
+                    const reviewsPerStar = document.querySelectorAll("table.stars-counters tbody tr")
+                    reviewsPerStar.forEach(el => {
+                        starReviews[el.querySelector("span.stars-filter-wrapper").innerText.trim()] = el.querySelector("td.star-num").innerText.trim()
+                        safeStyle(el, "#00ff43")
+                    })
+                } catch (error) {
+                    console.error(error)
+                }
+
+                sellerInfo = {}
+
+                try {
+                    const profileCredentials = document.querySelectorAll("ul.user-stats li");
+                    profileCredentials.forEach(el => {
+                        const strong = el.querySelector("strong");
+
+                        if (!strong) return;
+
+                        const key =
+                            el.querySelector("p")?.innerText.trim() ||
+                            el.textContent.replace(strong.textContent, "").trim();
+
+                        sellerInfo[key] = strong.textContent.trim();
+                        safeStyle(el)
+                    })
+
+                } catch (error) {
+                    console.error(error)
+                }
 
                 return {
                     gig: {
-                        title: title ? title.innerText.trim() : "Title Not Found",
-                        description: description
-                            ? description.innerText.trim()
-                            : "Description Not Found",
-                        experties: experties ? experties.innerText.trim() : "Experities Not Found",
-                        categoryAndSubcategory: categoryAndSubcategory ? categoryAndSubcategory.innerText.trim() : "Category And Subcategory Not Found",
-                        packages: packages ? JSON.stringify(packages) : "Packages Not Found",
-                        tags: tags ? tags.innerText.trim() : "Tags Not Found",
-
+                        title: safeText(title),
+                        description: safeText(description),
+                        experties: safeText(experties),
+                        categoryAndSubcategory: safeText(categoryAndSubcategory),
+                        packages: Object.keys(packages).length
+                            ? JSON.stringify(packages)
+                            : "Not Found in Gig",
+                        tags: safeText(tags),
+                        totalReview: safeText(totalReview),
+                        gigStars: Object.keys(starReviews).length ? JSON.stringify(starReviews) : "Not Found in Gig"
                     },
 
                     profile: {
-                        userProfileDescrption: userProfileDescrption ? userProfileDescrption.innerText.trim() : "Gig Description Not found",
-                        rating: rating ? rating.innerText.trim() : "Rating Not Found"
+                        userProfileDescrption: safeText(userProfileDescrption),
+                        rating: safeText(rating),
+                        profileCredential: Object.keys(sellerInfo).length ? JSON.stringify(sellerInfo) : "Not Found in Gig",
                     }
                 };
             }
         });
 
-
         const data = results[0].result;
-        content = `
-                Title: ${data.gig.title} \n
-                
-                Description: ${data.gig.description} \n
-                
-                experities: ${data.gig.experties} \n
-                
-                categoryAndSubcategory: ${data.gig.categoryAndSubcategory} \n
-                
-                packages: ${data.gig.packages} \n
-                                
-                Tags:\n ${data.gig.tags} \n
-                
-                userProfileDescription: ${data.profile.userProfileDescrption} \n
 
-                ratings:\n ${data.profile.rating}
-                `;
+        const content = `
+                Title: ${data.gig.title}
 
-        console.log(content)
-        document.getElementById("output").innerText = content
+                Description: ${data.gig.description}
 
+                Experties: ${data.gig.experties}
+
+                Category & Subcategory: ${data.gig.categoryAndSubcategory}
+
+                Packages: ${data.gig.packages}
+
+                Tags: ${data.gig.tags}
+
+                UserProfileDescription: ${data.profile.userProfileDescrption}
+
+                Ratings: ${data.profile.rating}
+
+                TotalReview: ${data.gig.totalReview}
+
+                GigStars: ${data.gig.gigStars}
+
+                AboutProfile: ${data.profile.profileCredential}
+
+        `;
+
+        console.log(content);
+        document.getElementById("output").innerText = content;
 
     } catch (error) {
         console.error(error);
