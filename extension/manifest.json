@@ -1,9 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "Title Extractor",
+  "name": "GigBro",
   "version": "1.0",
   "permissions": ["activeTab", "scripting"],
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "images/gigBro-logo.png",
+      "48": "images/gigBro-logo.png",
+      "128": "images/gigBro-logo.png"
+    }
+  },
+  "icons": {
+    "16": "images/gigBro-logo.png",
+    "48": "images/gigBro-logo.png",
+    "128": "images/gigBro-logo.png"
   }
 }

@@ -1,5 +1,6 @@
 document.getElementById("btn").addEventListener("click", async () => {
     try {
+        
         const [tab] = await chrome.tabs.query({
             active: true,
             currentWindow: true
