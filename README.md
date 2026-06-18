@@ -17,4 +17,7 @@ for your gig to get rank and attract clients.
 #### Work-Flow:
 ![System Flow Diagram](public/System-flow.png)
 
+#### Visuals:
+![GigBro Logo](public/gigBro-logo.jpeg)
+
 
