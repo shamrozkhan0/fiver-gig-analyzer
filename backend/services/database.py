@@ -1,12 +1,9 @@
-import json
-from idlelib import query
-
 from dotenv import load_dotenv
 from entity.user import User
 import logging as log
+from jwt_token import create_token
 from os import getenv
 import pymysql
-
 
 load_dotenv()
 log.basicConfig(level=log.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",)
@@ -116,22 +113,23 @@ class Database:
             with conn.cursor() as cursor:
                 cursor.execute(verify_user_query, (user.email,))
                 email,password = cursor.fetchone()
+                conn.close()
+                jwt_token = create_token(user)
 
                 if user.password == password:
                     return {
                         "status": True,
                         "message": "Login Successfully",
-                        "token": ... ,
+                        "token": jwt_token
                     }
 
-                print(email,password)
-
-            conn.close()
+                return {
+                    "status": False,
+                    "message": "Email or password is incorrect."
+                }
 
         except pymysql.Error as e:
             log.error(e)
-
-
 
 
 c = Database()
