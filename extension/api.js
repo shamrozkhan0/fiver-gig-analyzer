@@ -1,3 +1,6 @@
+import { startScrapping } from "./index.js"
+
+
 const WEB_URL = "https://google.com"
 
 chrome.storage.local.get("gigbro_token", (res) => {
@@ -14,8 +17,13 @@ const showLogin = () => {
     const container = document.querySelector("div.container");
 
     container.innerHTML = `
-        <h1>Seems like you are not logged in</h1>
-        <button type="button" id="loginButton">Login</button>
+        <img src="./images/gigBro-logo.png" alt="" class="login-gigbro-logo">
+
+    <div class="row display-flex align-items-center justify-center flex-column py-50 gap-20">
+        <p class="text-center text">Looks like you are not logged in </br>
+         please login to continue and access all features </p>
+        <button type="button" id="loginButton"><b>Login</b></button>
+      </div>
     `;
 
     // attach AFTER DOM exists
@@ -38,5 +46,11 @@ const showScrapper = () => {
     <input name="content" type="text" id="cotent">
     <button type="submit">submit</button>
 </form>
-    `
+    `;
+
+    document.getElementById("btn").addEventListener("click", () => {
+        startScrapping()
+    })
+
+
 }

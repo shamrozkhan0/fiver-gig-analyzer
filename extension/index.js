@@ -1,4 +1,6 @@
-document.getElementById("btn").addEventListener("click", async () => {
+// document.getElementById("btn").addEventListener("click", async
+    
+export const startScrapping = async () => {
     try {
         
         const [tab] = await chrome.tabs.query({
@@ -169,4 +171,4 @@ document.getElementById("btn").addEventListener("click", async () => {
         document.getElementById("output").innerText =
             `Error: ${error.message}`;
     }
-});
+}

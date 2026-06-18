@@ -6,15 +6,15 @@
   "action": {
     "default_popup": "index.html",
     "default_icon": {
-      "16": "images/gigBro-logo.jpeg",
-      "48": "images/gigBro-logo.jpeg",
-      "128": "images/gigBro-logo.jpeg"
+      "16": "./images/gigBro-logo.png",
+      "48": "./images/gigBro-logo.png",
+      "128":"./images/gigBro-logo.png"
     }
   },
   "icons": {
-    "16": "images/gigBro-logo.jpeg",
-    "48": "images/gigBro-logo.jpeg",
-    "128": "images/gigBro-logo.jpeg"
+    "16": "./images/gigBro-logo.png",
+    "48": "./images/gigBro-logo.png",
+    "128":"./images/gigBro-logo.png"
   },
   "web_accessible_resources": [
     {
