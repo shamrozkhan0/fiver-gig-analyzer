@@ -1,25 +1,25 @@
 import { startScrapping } from "./index.js"
 
 
-const WEB_URL = "https://google.com"
+const WEB_URL = "http://localhost:5173/"
+
 
 chrome.storage.local.get("gigbro_token", (res) => {
     if (!res.gigbro_token) {
         showLogin()
     } else {
-        // window.location.href = "scrapper.html"
         showScrapper()
     }
 })
-
+ 
 
 const showLogin = () => {
     const container = document.querySelector("div.container");
 
     container.innerHTML = `
-        <img src="./images/gigBro-logo.png" alt="" class="login-gigbro-logo">
-
     <div class="row display-flex align-items-center justify-center flex-column py-50 gap-20">
+        <img src="./images/gigBro-logo.png" alt="" class="login-gigbro-logo">
+        <h2>Welcome to GigGro</h2>
         <p class="text-center text">Looks like you are not logged in </br>
          please login to continue and access all features </p>
         <button type="button" id="loginButton"><b>Login</b></button>
@@ -38,14 +38,14 @@ const showScrapper = () => {
     container.innerHTML = `
     <h1>Scrapper</h1>
     
-<button id="btn">Get Title</button>
+    <button id="btn">Get Title</button>
 
-<p id="output">Nothing yet</p>
+    <p id="output">Nothing yet</p>
 
-<form action="http://127.0.0.1:8000/" method="post">
+    <form action="http://127.0.0.1:8000/" method="post">
     <input name="content" type="text" id="cotent">
     <button type="submit">submit</button>
-</form>
+    </form>
     `;
 
     document.getElementById("btn").addEventListener("click", () => {

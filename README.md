@@ -19,5 +19,6 @@ for your gig to get rank and attract clients.
 
 #### Visuals:
 ![GigBro Logo](public/gigBro-logo.jpeg)
+![Login Page](public/login.png)
 
 
