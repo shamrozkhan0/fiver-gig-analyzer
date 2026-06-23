@@ -2,24 +2,29 @@
   "manifest_version": 3,
   "name": "GigBro",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "cookies"
+  ],
+  "host_permissions":[
+    "http://localhost:8000/*"
+  ],
   "action": {
     "default_popup": "index.html",
     "default_icon": {
       "16": "./images/gigBro-logo.png",
       "48": "./images/gigBro-logo.png",
-      "128":"./images/gigBro-logo.png"
+      "128": "./images/gigBro-logo.png"
     }
   },
   "icons": {
     "16": "./images/gigBro-logo.png",
     "48": "./images/gigBro-logo.png",
-    "128":"./images/gigBro-logo.png"
+    "128": "./images/gigBro-logo.png"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["login.html", "scrapper.html"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  "background":{
+    "service_worker": "background.js"
+  }
 }

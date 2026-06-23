@@ -1,7 +1,10 @@
+import os
+
+import jwt
 from dotenv import load_dotenv
 from entity.user import User
 import logging as log
-from jwt_token import create_token
+from services.jwt_token import create_token
 from os import getenv
 import pymysql
 
@@ -132,6 +135,8 @@ class Database:
             log.error(e)
 
 
-c = Database()
-c.is_table_exist(c.auth_table_name)
-print(c.verify_user(user=User(email="shamroz", password="1234")))
+    def verify_jwt(self, jwt_token: str):
+        user = jwt.decode(jwt=jwt_token, key=os.getenv("JWT_SECRET_KEY"), algorithms=os.getenv("JWT_ALGORITHM"))
+        print(user)
+        return user
+

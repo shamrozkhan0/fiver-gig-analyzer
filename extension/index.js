@@ -1,6 +1,6 @@
 // document.getElementById("btn").addEventListener("click", async
     
-export const startScrapping = async () => {
+async function startScrapping () {
     try {
         
         const [tab] = await chrome.tabs.query({
@@ -172,3 +172,6 @@ export const startScrapping = async () => {
             `Error: ${error.message}`;
     }
 }
+
+
+window.startScrapping = startScrapping;

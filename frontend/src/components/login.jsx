@@ -1,11 +1,35 @@
 import logo from "../../images/gigBro-logo.png"
+import { useState } from "react"
 
 const Login = () => {
-  const loginURL = import.meta.env.VITE_LOGIN_URL
+
+  const [email, setEmail] = useState(null)
+  const [password, setPassword] = useState(null)
+  const logniURL = import.meta.env.VITE_LOGIN_URL
+
+  const submitForm = async (e) => {
+    e.preventDefault()
+
+    const response = await fetch(logniURL, {
+      method: "POST",
+      credentials:"include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    })
+
+    const data = await response.json()
+    // localStorage.setItem("gigbro_token", data.token)
+    console.log(data.token)
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      
+
       {/* Card */}
       <div className="w-[380px] bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
 
@@ -25,7 +49,7 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <form action={loginURL} method="post" className="mt-6 space-y-4">
+        <form onSubmit={submitForm} className="mt-6 space-y-4">
 
           {/* Email */}
           <div>
@@ -38,7 +62,8 @@ const Login = () => {
               placeholder="Enter your email"
               className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               required
-            /> 
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
 
           {/* Password */}
@@ -52,6 +77,7 @@ const Login = () => {
               placeholder="Enter your password"
               className="mt-1 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 "
               required
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
@@ -80,22 +106,4 @@ const Login = () => {
 }
 
 export default Login
-// const login = () => {
-//   const loginURL = import.meta.env.VITE_LOGIN_URL
 
-//   return (
-//     <div>
-//         <h1 className="text-green-500">Welcome to GigBro</h1>
-//         <form action={loginURL} method="post">
-//         <label htmlFor="email">Email</label>
-//         <input type="email" name="email" />
-//         <label htmlFor="password" >Password</label>
-//         <input type="password" name="password" />
-//         <p>Don't have an account? <a href="/signup">Signup</a></p>
-//       </form>
-      
-//     </div>
-//   )
-// }
-
-// export default login
