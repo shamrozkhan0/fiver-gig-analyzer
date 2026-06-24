@@ -16,8 +16,8 @@ app.add_middleware(
     allow_methods=["*"],            # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
     allow_headers=["*"],            # Allows all request headers
 )
-log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename)s - %(message)s',)
 
+log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename)s - %(message)s',)
 
 @app.get("/")
 def hello_world(data: str = Form(...)):
@@ -58,13 +58,15 @@ def login_user(user: User, response: Response):
 
 @app.get("/me")
 def get_me(jwt_token: str = Cookie(None)):
-
-
-
     if not jwt_token:
         raise HTTPException(401, "Not authenticated")
-
-
     db = Database()
     user = db.verify_jwt(jwt_token)
     return user
+
+
+@app.post("/logout")
+def logout(response: Response):
+    response.delete_cookie(key="jwt_token")
+    log.info("| logout completed")
+    return {"message": "logout"}
