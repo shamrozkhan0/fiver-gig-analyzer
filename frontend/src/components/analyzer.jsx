@@ -3,15 +3,21 @@ import { useEffect } from "react"
 
 const Analyzer = () => {
     const navigate = useNavigate()
+    const cookieURL = import.meta.env.VITE_BACKEND_URL + "me"
 
     useEffect(() => {
-        const token = localStorage.getItem("gigbro_token")
+        async function checkToken() {
+            await fetch(cookieURL, {
+                method: "get",
+                credentials: "include"
+            }).then((res) => {
+                if (!res.ok) {
+                    navigate("/login")
+                }
 
-        if (!token) {
-            console.log("token not found")
-            navigate("/login")
+            }).catch(err => console.log(`Error: ${err}`))
         }
-
+        checkToken()
     }, [navigate])
 
     return (

@@ -1,5 +1,4 @@
 import os
-
 import jwt
 from dotenv import load_dotenv
 from entity.user import User
@@ -41,7 +40,7 @@ class Database:
                 connection.close()
                 return True if result else False
         except pymysql.Error as e:
-            log.info(f"| Error while check checking id database exist {e} ")
+            log.info(f"| Error while checking if database exist {e} ")
             return e
 
 
@@ -58,10 +57,9 @@ class Database:
         create_table_query = f"""CREATE TABLE {self.auth_table_name} (
                                 id INT PRIMARY KEY AUTO_INCREMENT,
                                 email VARCHAR(50) UNIQUE NOT NULL,
-                                password VARCHAR(20) NOT NULL,
-                                is_logged Boolean DEFAULT FALSE
+                                password VARCHAR(20) NOT NULL
                                 )"""
-        register_user_query = f"""INSERT INTO {self.auth_table_name} (email, password, is_logged) VALUES (%s, %s, %s)"""
+        register_user_query = f"""INSERT INTO {self.auth_table_name} (email, password) VALUES (%s, %s)"""
         try:
             database_connection = self._connect_with_database()
 
@@ -74,7 +72,7 @@ class Database:
 
                 if self.check_if_user_exist_by_email(database_connection, user.email):
                     return {
-                        "status": False,
+                        "success": False,
                         "message": f"User with email {user.email} already exist."
                     }
 
@@ -83,14 +81,13 @@ class Database:
                     (
                         user.email,
                         user.password,
-                        user.is_logged)
-                )
+                ))
                 log.info(f"| Successfully register a user with email {user.email}")
 
                 database_connection.commit()
                 database_connection.close()
                 return {
-                    "status": True,
+                    "success": True,
                     "message": "Signup Completed"
                 }
 
@@ -108,6 +105,7 @@ class Database:
         try:
             conn = self._connect_with_database()
             if not self.check_if_user_exist_by_email(conn, user.email):
+                print("User not exist")
                 return {
                     "status": False,
                     "message": f"User with email: {user.email} doesn't exist"
@@ -134,9 +132,4 @@ class Database:
         except pymysql.Error as e:
             log.error(e)
 
-
-    def verify_jwt(self, jwt_token: str):
-        user = jwt.decode(jwt=jwt_token, key=os.getenv("JWT_SECRET_KEY"), algorithms=os.getenv("JWT_ALGORITHM"))
-        print(user)
-        return user
 

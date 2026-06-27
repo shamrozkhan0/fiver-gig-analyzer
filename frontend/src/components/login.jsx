@@ -1,18 +1,20 @@
 import logo from "../../images/gigBro-logo.png"
+import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
 const Login = () => {
 
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
-  const logniURL = import.meta.env.VITE_LOGIN_URL
+  const logniURL = import.meta.env.VITE_BACKEND_URL + "login"
+  const navigate = useNavigate()
 
   const submitForm = async (e) => {
     e.preventDefault()
 
     const response = await fetch(logniURL, {
       method: "POST",
-      credentials:"include",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
@@ -22,9 +24,9 @@ const Login = () => {
       })
     })
 
-    const data = await response.json()
-    // localStorage.setItem("gigbro_token", data.token)
-    console.log(data.token)
+    // const data = await response.json()
+    // console.log(data.token)
+    navigate("/")
   }
 
   return (

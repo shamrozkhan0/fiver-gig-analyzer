@@ -1,14 +1,17 @@
-import logging as log
-
-from fastapi import FastAPI, Form, Response, Cookie
-from fastapi import HTTPException
-from entity.user import User
-from services.database import Database
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Response, Cookie
+from services.jwt_token import verify_jwt
+from services.database import Database
+from fastapi import HTTPException
 from dotenv import load_dotenv
+from entity.user import User
+import logging as log
 import os
+
+
 app = FastAPI()
 load_dotenv()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[os.getenv("FRONTEND_URL"), os.getenv("EXTENSION_ID")],           # Allows requests from specified origins
@@ -17,22 +20,18 @@ app.add_middleware(
     allow_headers=["*"],            # Allows all request headers
 )
 
-log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename)s - %(message)s',)
 
-@app.get("/")
-def hello_world(data: str = Form(...)):
-    return {
-        "recieved" : data
-    }
+log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename)s - %(message)s',)
 
 
 @app.post("/signup")
 def register_user(user: User ):
         db = Database()
         response = db.register_user(user)
-        if response.status:
-            return {"status": 200, "message": response.message }
-        raise HTTPException(status_code=400, detail=response.message)
+        print("response: ", response )
+        if response["success"]:
+            return {"status": 200, "message": response["message"] }
+        raise HTTPException(status_code=400, detail=response["message"])
 
 
 @app.post("/login")
@@ -40,7 +39,7 @@ def login_user(user: User, response: Response):
     log.info("| Reviewed Login request")
     db = Database()
     result = db.verify_user(user)
-    print(result)
+    print("result: ", result)
 
     token = result["token"]
 
@@ -53,15 +52,16 @@ def login_user(user: User, response: Response):
         samesite="lax",
         max_age= 60 * 60 * 24 * 1
     )
-    return result
+    return {"status" : True, "message": "Login Completed"}
 
 
 @app.get("/me")
 def get_me(jwt_token: str = Cookie(None)):
+    log.info(f"| me alert {jwt_token}")
     if not jwt_token:
+        log.error("| Error jwt token not found")
         raise HTTPException(401, "Not authenticated")
-    db = Database()
-    user = db.verify_jwt(jwt_token)
+    user = verify_jwt(jwt_token)
     return user
 
 

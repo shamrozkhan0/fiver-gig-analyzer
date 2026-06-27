@@ -4,16 +4,44 @@ const BACKEND_URL = "http://localhost:8000/"
 console.log("Popup loaded");
 
 
-fetch("http://localhost:8000/me", {
-  credentials: "include"
-})
-  .then(res => {
-    if (res.ok) {
-      showScrapper();
-    } else {
-      showLogin();
-    }
-  });
+async function isFiverTab() {
+
+  let activeTab = { active: true, currentWindow: true };
+  let [tab] = await chrome.tabs.query(activeTab);
+
+
+  let url = tab.url.includes("https://www.fiverr.com/")
+  console.log(url)
+
+  if (url) {
+   try{
+     fetch("http://localhost:8000/me", {
+      credentials: "include"
+    })
+      .then(res => {
+        if (res.ok) {
+          showScrapper();
+        } else {
+          showLogin(); 
+        }
+      }).catch(err =>{
+        console.error(err)
+      });
+   } catch(error){
+    console.error(error)
+   }
+
+  } else {
+    const html = `
+      <h1>You are not in Fiver</h1>
+    `
+    const title = document.querySelector("div.container h1")
+    title.textContent = "Not on Fiver"
+  }
+
+}
+
+isFiverTab()
 
 
 
@@ -26,6 +54,8 @@ async function logout() {
   showLogin()
 
 }
+
+
 
 const showLogin = () => {
   const container = document.querySelector("div.container");
@@ -52,7 +82,7 @@ const showScrapper = () => {
   container.innerHTML = `
     <h1>Scrapper</h1>
 
-    <button id="btn">Get Title</button>
+    <button id="btn">Get Gig Content</button>
 
     <p id="output">Nothing yet</p>
 
