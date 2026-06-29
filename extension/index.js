@@ -1,8 +1,8 @@
-// document.getElementById("btn").addEventListener("click", async
-    
-async function startScrapping () {
+async function startScrapping() {
+    const BACKEND_SAVE_DATA_URL = "http://localhost:8000/savecontent"
+
     try {
-        
+
         const [tab] = await chrome.tabs.query({
             active: true,
             currentWindow: true
@@ -13,13 +13,13 @@ async function startScrapping () {
             func: () => {
 
                 const safeText = (el) =>
-                    el ? el.innerText.trim() : "Not Found in Gig";
+                    el ? el.innerText.trim().replace(/\s+/g, " ") : "Not Found in Gig";
 
                 const safeStyle = (el, color = "#00ff43") => {
                     if (el) el.style.background = color;
                 };
 
-                const title = document.querySelector("h1");
+                const title = document.querySelector("div.gig-overview h1");
                 const description = document.querySelector("div.description-wrapper");
                 const experties = document.querySelector("ul.metadata");
                 const categoryAndSubcategory = document.querySelector("ol.m2d0eb0");
@@ -29,12 +29,9 @@ async function startScrapping () {
                 safeStyle(experties);
                 safeStyle(categoryAndSubcategory);
 
-                // Package handling safely
                 const packageTabs = document.querySelectorAll(
                     "div.packages-tabs div.nav-container label"
                 );
-
-                // safeStyle(packageTabs)
 
                 const packages = {};
 
@@ -138,6 +135,20 @@ async function startScrapping () {
 
         const data = results[0].result;
 
+        const title = document.querySelector("p.title")
+        const description = document.querySelector("p.description")
+        const experties = document.querySelector("p.experties")
+        const categoryAndSubcategory = document.querySelector("p.category-and-subcategory")
+        const packages = document.querySelector("p.packages")
+        const tags = document.querySelector("p.tags")
+        const profile = document.querySelector("p.profile-description")
+        const rating = document.querySelector("p.rating")
+        const reviews = document.querySelector("p.reviews")
+        const gigstars = document.querySelector("p.gigstars")
+        const aboutprofile = document.querySelector("p.aboutProfile")
+
+
+
         const content = `
                 Title: ${data.gig.title}
 
@@ -164,6 +175,37 @@ async function startScrapping () {
         `;
 
         console.log(content);
+
+        const response = await fetch(BACKEND_SAVE_DATA_URL, {
+            method: "post",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title: data.gig.title,
+                description: data.gig.description,
+                expertise: data.gig.experties,
+                category_and_subcategory: data.gig.categoryAndSubcategory,
+                packages: data.gig.packages,
+                tags: data.gig.tags,
+                profile_description: data.profile.userProfileDescrption,
+                ratings: data.profile.rating,
+                total_review: data.gig.totalReview,
+                gig_stars: data.gig.gigStars,
+                about_profile: data.profile.profileCredential,
+            })
+
+        })
+        console.log(response)
+
+        if (response.ok) {
+            const result = await response.json()
+            console.log(result) 
+                // console.log("Error comes in response")
+        }
+
+
         document.getElementById("output").innerText = content;
 
     } catch (error) {

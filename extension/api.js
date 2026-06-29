@@ -10,9 +10,11 @@ async function isFiverTab() {
   let [tab] = await chrome.tabs.query(activeTab);
 
 
-  let url = tab.url.includes("https://www.fiverr.com/")
+  let url = tab.url.startsWith("https://www.fiverr.com/")
   console.log(url)
 
+
+  
   if (url) {
    try{
      fetch("http://localhost:8000/me", {
@@ -35,7 +37,7 @@ async function isFiverTab() {
     const html = `
       <h1>You are not in Fiver</h1>
     `
-    const title = document.querySelector("div.container h1")
+    const title = document.querySelector("div.container div.wrapper h1")
     title.textContent = "Not on Fiver"
   }
 
@@ -54,7 +56,6 @@ async function logout() {
   showLogin()
 
 }
-
 
 
 const showLogin = () => {
@@ -77,20 +78,29 @@ const showLogin = () => {
 
 
 const showScrapper = () => {
-  const container = document.querySelector("div.container");
+  const container = document.querySelector("div.container div.wrapper");
 
   container.innerHTML = `
     <h1>Scrapper</h1>
 
-    <button id="btn">Get Gig Content</button>
+    <button id="btn">Start Scrapping</button>
+    <div>
+      <p class="title">Title: </p>
+      <p class="description">description: </p>
+      <p class="experties">Experties: </p>
+      <p class="category-and-subcategory">Category and Subcategory: </p>
+      <p class="packages">Packages: </p>
+      <p class="tags">Tags: </p>
+      <p class="profile-description">Profile Description: </p>
+      <p class="rating">Rating: </p>
+      <p class="reviews">Reviews: </p>
+      <p class="gigstars">GigStarts: </p>
+      <p class="aboutProfile">About Profile: </p>
+    </div>
+
+    <button id="logout">logout</button>
 
     <p id="output">Nothing yet</p>
-
-    <form id="scrapeForm">
-      <input name="content" type="text" id="content" />
-      <button type="submit">submit</button>
-    </form>
-    <button id="logout">logout<button/>
   `;
 
   // button click

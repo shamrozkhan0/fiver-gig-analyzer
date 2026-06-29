@@ -12,7 +12,7 @@ const Login = () => {
   const submitForm = async (e) => {
     e.preventDefault()
 
-    const response = await fetch(logniURL, {
+    await fetch(logniURL, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -23,9 +23,6 @@ const Login = () => {
         password: password
       })
     })
-
-    // const data = await response.json()
-    // console.log(data.token)
     navigate("/")
   }
 
