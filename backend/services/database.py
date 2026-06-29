@@ -1,9 +1,9 @@
-import os
-import jwt
+from xml.sax.handler import property_interning_dict
+
+from services.jwt_token import create_token
 from dotenv import load_dotenv
 from entity.user import User
 import logging as log
-from services.jwt_token import create_token
 from os import getenv
 import pymysql
 
@@ -14,6 +14,7 @@ class Database:
 
     def __init__(self):
         self.auth_table_name = "user"
+        self.data_table_name = "data"
 
 
     def _connect_with_database(self):
@@ -99,7 +100,6 @@ class Database:
             }
 
 
-
     def verify_user(self, user):
         verify_user_query = f"""SELECT email,password FROM {self.auth_table_name} WHERE email = %s"""
         try:
@@ -133,3 +133,70 @@ class Database:
             log.error(e)
 
 
+    def get_id_by_email(self, email):
+        get_id_by_email_query = f"""SELECT id  FROM {self.auth_table_name} WHERE email = %s"""
+        conn = self._connect_with_database()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(get_id_by_email_query, (email,))
+                return cursor.fetchone()
+        except pymysql.Error as e:
+            log.info(e)
+
+
+    def setContent(self, data, email):
+        table_query = f"""CREATE TABLE data (
+            content_id INT PRIMARY KEY AUTO_INCREMENT,
+            profile_id INT NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            description TEXT NOT NULL,
+            expertise TEXT NOT NULL,
+            category_and_subcategory VARCHAR(255) NOT NULL,
+            packages JSON NOT NULL,
+            tags TEXT NOT NULL,
+            profile_description TEXT NOT NULL,
+            ratings VARCHAR(100) NOT NULL,
+            total_review VARCHAR(50) NOT NULL,
+            gig_stars JSON NOT NULL,
+            about_profile JSON NOT NULL,
+            FOREIGN KEY (profile_id) REFERENCES user(id)
+            ); """
+
+        insert_content_query = f"""INSERT INTO {self.data_table_name} (
+                profile_id,
+                title,
+                description,
+                expertise,
+                category_and_subcategory, 
+                packages,
+                tags,
+                profile_description,
+                ratings,
+                total_review,
+                gig_stars,
+                about_profile 
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+
+        try:
+            conn = self._connect_with_database();
+
+            with conn.cursor() as cursor:
+                if not self.is_table_exist(self.data_table_name):
+                    log.info("| Creating table for storing data.")
+                    cursor.execute(table_query)
+                    log.info(f"| Successfully created table '{self.data_table_name}'.")
+
+                log.info("Inserting gig data into database")
+                profile_id = self.get_id_by_email(email)
+
+
+                cursor.execute(insert_content_query, (profile_id, data.title, data.description, data.expertise, data.category_and_subcategory,
+                                                      data.packages, data.tags, data.profile_description, data.ratings, data.total_review,
+                                                      data.gig_stars, data.about_profile))
+            conn.commit()
+            conn.close()
+            return True
+
+        except pymysql.Error as e:
+            log.error(f"| Failed to upload gig content into database: {e}")
+            return False

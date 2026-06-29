@@ -1,9 +1,10 @@
+import pymysql
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Response, Cookie
+from fastapi import FastAPI, Response, Cookie, HTTPException
 from services.jwt_token import verify_jwt
 from services.database import Database
-from fastapi import HTTPException
 from dotenv import load_dotenv
+from entity.data import Data
 from entity.user import User
 import logging as log
 import os
@@ -19,7 +20,6 @@ app.add_middleware(
     allow_methods=["*"],            # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
     allow_headers=["*"],            # Allows all request headers
 )
-
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename)s - %(message)s',)
 
@@ -70,3 +70,31 @@ def logout(response: Response):
     response.delete_cookie(key="jwt_token")
     log.info("| logout completed")
     return {"message": "logout"}
+
+
+@app.post("/savecontent")
+def save_content(data: Data, jwt_token: str = Cookie()):
+    # print("data: ", data)
+    user = verify_jwt(jwt_token)
+    print(user["email"])
+    db = Database()
+    result = db.setContent(data, user["email"])
+    if not result:
+        raise HTTPException(401, "| Error: saving gig content")
+    return {"status": True, "message": "Save successfully"}
+
+
+# For testing
+@app.get("/get")
+def analyze():
+    query = f""" SELECT * FROM data"""
+    db = Database()
+    conn = db._connect_with_database()
+    try:
+       with conn.cursor() as cursor:
+           cursor.execute(query)
+           content = cursor.fetchall()
+           print(content)
+           return content
+    except pymysql.Error as e:
+        print(e)
