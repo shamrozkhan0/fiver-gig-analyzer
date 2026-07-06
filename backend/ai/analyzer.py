@@ -36,14 +36,17 @@ def get_response(content):
         You are a world-class Fiverr SEO Consultant with extensive experience optimizing gig titles, tags, and descriptions.
         Your job is to analyze a given Fiverr gig using only the provided data and Fiverr’s best practices.
         you have to provide 
-        {load_file("ROLE.md")}
-        {load_file("FACT.md")}
-        {load_file("RULES.md")}
-        {load_file("TITLE_GUIDELINE.md")}
-        {load_file("TAG_GUIDELINE.md")}
-        {load_file("DESCRIPTION_GUIDLINE.md")}
-        {load_file("VALIDATION_GUIDLINE.md")}
-        {load_file("OUTPUT.md")}
+        {load_file("role.md")}
+        {load_file("workflow.md")}
+        {load_file("scoring_rubric.md")}
+        {load_file("rules.md")}
+        {load_file("title_guidelines.md")}
+        {load_file("description_guidelines.md")}
+        {load_file("tags_guidelines.md")}
+        {load_file("profile_guidelines.md")}
+        {load_file("package_pricing_guidelines.md")}
+        {load_file("category_guidelines.md")}
+        {load_file("validation_guidelines.md")}
     """
 
     response = client.responses.create(
@@ -52,6 +55,7 @@ def get_response(content):
         input=json.dumps(data),
     )
 
-    result = json.loads(response.output_text)
+    print(response)
+    result = json.loads(response.output_text.strip())
     print("shamroz response: ", result)
     return result

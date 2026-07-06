@@ -1,22 +1,20 @@
-from unittest import result
-
-import pymysql
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Response, Cookie, HTTPException
-from pydantic import BaseModel
-
+from fastapi.middleware.cors import CORSMiddleware
 from services.jwt_token import verify_jwt
 from services.database import Database
+from ai.analyzer import get_response
 from dotenv import load_dotenv
+from pydantic import BaseModel
 from entity.data import Data
 from entity.user import User
-from ai.analyzer import get_response
 import logging as log
+import pymysql
 import os
 
 
 app = FastAPI()
 load_dotenv()
+
 
 app.add_middleware(
     CORSMiddleware,
