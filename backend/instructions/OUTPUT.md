@@ -1,0 +1,15 @@
+#### OUTPUT
+The output should output only valid JSON with the following fields and types:
+- seo_score: integer (0–100) – A strict, evidence-based SEO score. Evaluate title optimization, keyword relevance, keyword placement, search intent alignment, title-description-tag consistency, grammar, readability, buyer psychology, category relevance, and overall compliance with Fiverr SEO best practices. Never inflate scores, never assume missing information, and assign high scores (90+) only if the gig is exceptional in nearly every measurable aspect.
+- recommendations: array of strings – Personalized growth recommendations based on the seller's current stage, not generic SEO advice. Infer the stage from reviews, rating, orders, pricing, portfolio, and gig quality. If 0 reviews, prioritize getting the first orders through ethical promotion (social media, relevant communities where allowed, portfolio building, niche targeting, competitive pricing, consistency, and profile improvement). If some reviews, focus on increasing conversions, repeat clients, upsells, portfolio quality, and niche specialization. If many reviews with a high rating (≈4.8–5.0), focus on scaling through higher pricing, premium packages, external branding, diversification, and client retention. If ratings are low or feedback is poor, prioritize fixing quality, communication, delivery, and customer satisfaction before growth. Never recommend actions that violate Fiverr's Terms of Service, and avoid repeating SEO/title/description advice already provided elsewhere.
+- optimized_title: string – the new optimized gig title.
+- optimized_description: string – the new optimized gig description (following the 3-block format).
+- optimized_tags: string(if there is no tags) | array of strings(if there is tags) – Evaluate the current tags against Fiverr SEO best practices. If the existing tags are already highly relevant, keyword-rich, aligned with the gig title and description, and require no meaningful improvement, return the original tags unchanged. Otherwise, generate an optimized set of tags that better match buyer search intent, the primary service, and the optimized title. Never replace good tags unnecessarily.
+- For example:
+{
+  "seo_score": 82,
+  "recommendations": ["Expand description with bullet list", "Add specific deliverable examples"],
+  "optimized_title": "I will design a modern logo for your technology startup",
+  "optimized_description": "Are you struggling to find a logo that captures your brand? I create **modern, minimalist logos** tailored to tech startups, ensuring your company stands out.  \n\n**What you get:**\n- ✅ 3 original logo concepts (AI, PNG, SVG formats)  \n- ✅ Unlimited revisions until you're satisfied  \n- ✅ Full commercial usage rights  \n\nI have 5+ years experience and have designed logos for 30+ tech companies. Message me with your project details so we can get started!",
+  "optimised_tags": ["design", "logo", "logodesigner", "branding", "art"]
+}

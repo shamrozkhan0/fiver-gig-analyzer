@@ -1,31 +1,22 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-
-import Analyzer from "./components/analyzer.jsx"
+import Editor from "./components/ediitor.jsx"
 import Signup from "./components/signup.jsx"
 import Login from "./components/login.jsx"
 import Auth from "./layouts/auth"
-
 import './App.css'
 
 
 function App() {
   return (
     <>
-
       <BrowserRouter>
         <Routes>
-
-          <Route path="/" element={<Analyzer />} />
-
+          <Route path="/:user_id/:content_id" element={<Editor />} />
           <Route element={<Auth />}>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Route>
-
         </Routes>
-
-
-
       </BrowserRouter>
     </>
 

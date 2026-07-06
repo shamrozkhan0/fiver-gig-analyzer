@@ -1,3 +1,5 @@
+import json
+from email import message_from_binary_file
 from xml.sax.handler import property_interning_dict
 
 from services.jwt_token import create_token
@@ -134,7 +136,7 @@ class Database:
 
 
     def get_id_by_email(self, email):
-        get_id_by_email_query = f"""SELECT id  FROM {self.auth_table_name} WHERE email = %s"""
+        get_id_by_email_query = f"""SELECT id FROM {self.auth_table_name} WHERE email = %s"""
         conn = self._connect_with_database()
         try:
             with conn.cursor() as cursor:
@@ -150,14 +152,14 @@ class Database:
             profile_id INT NOT NULL,
             title VARCHAR(255) NOT NULL,
             description TEXT NOT NULL,
-            expertise TEXT NOT NULL,
+            expertise JSON NOT NULL,
             category_and_subcategory VARCHAR(255) NOT NULL,
             packages JSON NOT NULL,
             tags TEXT NOT NULL,
             profile_description TEXT NOT NULL,
-            ratings VARCHAR(100) NOT NULL,
-            total_review VARCHAR(50) NOT NULL,
-            gig_stars JSON NOT NULL,
+            ratings VARCHAR(100),
+            total_review VARCHAR(50),
+            gig_stars JSON,
             about_profile JSON NOT NULL,
             FOREIGN KEY (profile_id) REFERENCES user(id)
             ); """
@@ -179,7 +181,6 @@ class Database:
 
         try:
             conn = self._connect_with_database();
-
             with conn.cursor() as cursor:
                 if not self.is_table_exist(self.data_table_name):
                     log.info("| Creating table for storing data.")
@@ -189,14 +190,36 @@ class Database:
                 log.info("Inserting gig data into database")
                 profile_id = self.get_id_by_email(email)
 
-
-                cursor.execute(insert_content_query, (profile_id, data.title, data.description, data.expertise, data.category_and_subcategory,
+                cursor.execute(insert_content_query, (profile_id, data.title, data.description, json.dumps([e.model_dump() for e in  data.expertise]), data.category_and_subcategory,
                                                       data.packages, data.tags, data.profile_description, data.ratings, data.total_review,
                                                       data.gig_stars, data.about_profile))
-            conn.commit()
+                conn.commit()
+                content_id = cursor.lastrowid
             conn.close()
-            return True
+            return {"content_id": content_id, "user_id": profile_id}
 
         except pymysql.Error as e:
             log.error(f"| Failed to upload gig content into database: {e}")
             return False
+
+
+
+    def get_content_by_id(self, user_id, content_id, email):
+        get_user_id_by_email_query = f"""SELECT id FROM {self.auth_table_name} WHERE email = %s """
+        get_content_by_id_query = f"""SELECT * FROM {self.data_table_name} WHERE content_id = %s """
+        conn = self._connect_with_database()
+
+        with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute(get_user_id_by_email_query, (email,))
+            original_content_user_id = cursor.fetchone()
+            print(original_content_user_id["id"])
+
+            if not original_content_user_id["id"] == user_id:
+                return {"success": False, "message": "You are not The Owner"}
+
+            cursor.execute(get_content_by_id_query, (content_id,))
+            content = cursor.fetchone()
+            conn.close()
+            content.pop("profile_id")
+            content.pop("content_id")
+            return {"success": True, "message": content}

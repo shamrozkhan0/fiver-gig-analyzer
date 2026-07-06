@@ -14,24 +14,24 @@ async function isFiverTab() {
   console.log(url)
 
 
-  
+
   if (url) {
-   try{
-     fetch("http://localhost:8000/me", {
-      credentials: "include"
-    })
-      .then(res => {
-        if (res.ok) {
-          showScrapper();
-        } else {
-          showLogin(); 
-        }
-      }).catch(err =>{
-        console.error(err)
-      });
-   } catch(error){
-    console.error(error)
-   }
+    try {
+      fetch("http://localhost:8000/me", {
+        credentials: "include"
+      })
+        .then(res => {
+          if (res.ok) {
+            showScrapper();
+          } else {
+            showLogin();
+          }
+        }).catch(err => {
+          console.error(err)
+        });
+    } catch (error) {
+      console.error(error)
+    }
 
   } else {
     const html = `
@@ -72,8 +72,17 @@ const showLogin = () => {
 
   // attach AFTER DOM exists
   document.getElementById("loginButton").addEventListener("click", () => {
-    chrome.tabs.create({ url: WEB_URL });
+    chrome.tabs.create({ url: WEB_URL + "login"});
   });
+
+  const modal = document.querySelector("div.alert-modal")
+
+  document.querySelector(".show-modal-btn").addEventListener("click", () => {
+    modal.classList.add("message")
+    setTimeout(() => {
+      modal.classList.remove("message")
+    }, 3200);
+  })
 };
 
 
@@ -84,38 +93,45 @@ const showScrapper = () => {
     <h1>Scrapper</h1>
 
     <button id="btn">Start Scrapping</button>
-    <div>
-      <p class="title">Title: </p>
-      <p class="description">description: </p>
-      <p class="experties">Experties: </p>
-      <p class="category-and-subcategory">Category and Subcategory: </p>
-      <p class="packages">Packages: </p>
-      <p class="tags">Tags: </p>
-      <p class="profile-description">Profile Description: </p>
-      <p class="rating">Rating: </p>
-      <p class="reviews">Reviews: </p>
-      <p class="gigstars">GigStarts: </p>
-      <p class="aboutProfile">About Profile: </p>
-    </div>
+    <!-- <div>
+   <p class="title">Title: </p>
+   <p class="description">description: </p>
+   <p class="experties">Experties: </p>
+   <p class="category-and-subcategory">Category and Subcategory: </p>
+   <p class="packages">Packages: </p>
+   <p class="tags">Tags: </p>
+   <p class="profile-description">Profile Description: </p>
+   <p class="rating">Rating: </p>
+   <p class="reviews">Reviews: </p>
+   <p class="aboutProfile">About Profile: </p>
+   <p class="gigstars">GigStarts: </p>
+     </div>
+     --> 
 
     <button id="logout">logout</button>
 
     <p id="output">Nothing yet</p>
   `;
 
-  // button click
-  document.getElementById("btn").addEventListener("click", () => {
-    startScrapping();
+
+
+  // Scrapped Button 
+  document.getElementById("btn").addEventListener("click", async () => {
+    let isScrapped = await startScrapping()
+    console.log("content is scrapped", isScrapped)
+    if (isScrapped.status){
+      let url = WEB_URL + isScrapped.user_id + "/" + isScrapped.content_id
+      console.log(url)
+     setTimeout(()=>{
+      //  chrome.tabs.create({ url: url }); 
+     },3200)
+    }
   });
 
+
+
+  // Logout Button
   document.getElementById("logout").addEventListener("click", () => {
     logout()
   })
-
-  // form submit (IMPORTANT: prevent reload)
-  document.getElementById("scrapeForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const value = document.getElementById("content").value;
-    console.log("Form value:", value);
-  });
 };

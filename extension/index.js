@@ -1,3 +1,23 @@
+function showModal(message, isSucess) {
+    const modal = document.querySelector("div.alert-modal")
+    if (isSucess) {
+        modal.classList.remove("d-none")
+        modal.classList.add("message")
+        modal.querySelector("p.alert-modal-text").textContent = message
+    } else {
+        console.log("modal show red")
+
+    }
+
+    setTimeout(() => {
+        modal.classList.add("d-none")
+        modal.classList.remove("message")
+        return true
+    }, 3200)
+
+}
+
+
 async function startScrapping() {
     const BACKEND_SAVE_DATA_URL = "http://localhost:8000/savecontent"
 
@@ -23,6 +43,18 @@ async function startScrapping() {
                 const description = document.querySelector("div.description-wrapper");
                 const experties = document.querySelector("ul.metadata");
                 const categoryAndSubcategory = document.querySelector("ol.m2d0eb0");
+
+                let expertiesJson = [];
+                let finalExperties = experties.querySelectorAll("li.metadata-attribute")
+                finalExperties.forEach((el) => {
+                    expertiesJson.push({
+                        title: el.querySelector("p").textContent.trim().replace(/\s+/g, " "),
+                        items: [...el.querySelectorAll("ul li")].map(li => li.textContent.trim().replace(/\s+/g, " ") )
+                    })
+                })
+
+
+
 
                 safeStyle(title);
                 safeStyle(description);
@@ -64,7 +96,12 @@ async function startScrapping() {
                 }
 
                 const userProfileDescrption = document.querySelector("article.seller-desc");
-                const tags = document.querySelector("div.gig-tags-container ul");
+                const tags = document.querySelector("div.gig-tags-container ul")
+                const getTags = [...tags.querySelectorAll(" li")]
+                    .map(tag => tag.innerText.trim())
+                    .join(", ");
+
+                console.log(getTags);
                 const rating = document.querySelector("div.ranking");
 
                 safeStyle(userProfileDescrption, "#00ff43");
@@ -114,12 +151,12 @@ async function startScrapping() {
                     gig: {
                         title: safeText(title),
                         description: safeText(description),
-                        experties: safeText(experties),
+                        experties: expertiesJson,
                         categoryAndSubcategory: safeText(categoryAndSubcategory),
                         packages: Object.keys(packages).length
                             ? JSON.stringify(packages)
                             : "Not Found in Gig",
-                        tags: safeText(tags),
+                        tags: getTags,
                         totalReview: safeText(totalReview),
                         gigStars: Object.keys(starReviews).length ? JSON.stringify(starReviews) : "Not Found in Gig"
                     },
@@ -133,19 +170,9 @@ async function startScrapping() {
             }
         });
 
+
         const data = results[0].result;
 
-        const title = document.querySelector("p.title")
-        const description = document.querySelector("p.description")
-        const experties = document.querySelector("p.experties")
-        const categoryAndSubcategory = document.querySelector("p.category-and-subcategory")
-        const packages = document.querySelector("p.packages")
-        const tags = document.querySelector("p.tags")
-        const profile = document.querySelector("p.profile-description")
-        const rating = document.querySelector("p.rating")
-        const reviews = document.querySelector("p.reviews")
-        const gigstars = document.querySelector("p.gigstars")
-        const aboutprofile = document.querySelector("p.aboutProfile")
 
 
 
@@ -174,7 +201,7 @@ async function startScrapping() {
 
         `;
 
-        console.log(content);
+        // console.log(content);
 
         const response = await fetch(BACKEND_SAVE_DATA_URL, {
             method: "post",
@@ -197,21 +224,30 @@ async function startScrapping() {
             })
 
         })
-        console.log(response)
+        const data_response = await response.json()
+        console.log(data_response)
 
-        if (response.ok) {
+        if (!response.status === 401) {
             const result = await response.json()
-            console.log(result) 
-                // console.log("Error comes in response")
+            console.log(result)
+            console.log("Error comes in response")
+            return false
+        } else {
+            showModalDone = showModal("scrapped successfull", true)
+            console.log("id", data_response.content_id)
+            console.log("done:", showModalDone)
+            document.getElementById("output").innerText = content;
+            return {
+                status: true,
+                user_id: data_response.user_id,
+                content_id: data_response.content_id
+            }
         }
-
-
-        document.getElementById("output").innerText = content;
-
     } catch (error) {
         console.error(error);
         document.getElementById("output").innerText =
             `Error: ${error.message}`;
+        return false
     }
 }
 
