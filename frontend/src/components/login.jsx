@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 
 const Login = () => {
+  const my_navigate = useNavigate();
 
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
   const logniURL = import.meta.env.VITE_BACKEND_URL + "login"
-  const navigate = useNavigate()
 
   const submitForm = async (e) => {
     e.preventDefault()
@@ -86,18 +86,22 @@ const Login = () => {
               Forgot password?
             </a> */}
 
-            <a href="/signup" className="text-gray-600 hover:text-green-600">
-              Don't have an account? <b>Signup</b>
-            </a>
+                 <p className="text-right text-sm text-gray-500">
+            Already have an account?{" "}
+            <button type="button" onClick={() => my_navigate("/signup")} className="cursor-pointer font-bold text-slate-800 hover:text-emerald-600">
+              Sign Up
+            </button>
+          </p>
           </div>
 
           {/* Button */}
-          <button
-            type="submit"
-            className="w-full bg-fiver-green hover:bg-red-500 text-white font-semibold py-2 rounded-lg transition"
-          >
-            Login
-          </button>
+    <button
+      type="submit"
+      
+      className="w-full bg-fiver-green hover:bg-red-500 text-white font-semibold py-2 rounded-lg transition"
+    >
+      Login
+    </button>
         </form>
       </div>
     </div>

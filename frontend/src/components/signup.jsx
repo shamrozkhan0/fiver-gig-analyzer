@@ -1,9 +1,11 @@
-import GigBroLogo from "../../images/gigBro-logo.png"
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import GigBroLogo from "../../images/gigBro-logo.png"
+
 import { useState } from "react";
 
-
 const Signup = () => {
+  const my_navigate = useNavigate();
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const backendSignupURL = import.meta.env.VITE_BACKEND_URL + "signup"
   const navigate = useNavigate()
@@ -110,14 +112,16 @@ const Signup = () => {
           {/* Link back to login */}
           <p className="text-right text-sm text-gray-500">
             Already have an account?{" "}
-            <a href="#" className="font-bold text-slate-800 hover:text-emerald-600">
+            <button type="button" onClick={() => my_navigate("/login")} className="cursor-pointer font-bold text-slate-800 hover:text-emerald-600">
               Login
-            </a>
+            </button>
           </p>
 
           {/* Submit */}
           <button
+
             type="submit"
+            
             className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl py-3 text-sm transition shadow-sm"
           >
             Signup
