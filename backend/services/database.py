@@ -157,12 +157,12 @@ class Database:
             packages JSON NOT NULL,
             tags TEXT NOT NULL,
             profile_description TEXT NOT NULL,
-            ratings VARCHAR(100),
-            total_review VARCHAR(50),
+            ratings json,
+            total_review INT,
             gig_stars JSON,
             about_profile JSON NOT NULL,
             FOREIGN KEY (profile_id) REFERENCES user(id)
-            ); """
+            )"""
 
         insert_content_query = f"""INSERT INTO {self.data_table_name} (
                 profile_id,
@@ -191,8 +191,8 @@ class Database:
                 profile_id = self.get_id_by_email(email)
 
                 cursor.execute(insert_content_query, (profile_id, data.title, data.description, json.dumps([e.model_dump() for e in  data.expertise]), data.category_and_subcategory,
-                                                      data.packages, data.tags, data.profile_description, data.ratings, data.total_review,
-                                                      data.gig_stars, data.about_profile))
+                                                      data.packages, data.tags, data.profile_description, json.dumps(data.ratings), data.total_review,
+                                                      json.dumps(data.gig_stars), data.about_profile))
                 conn.commit()
                 content_id = cursor.lastrowid
             conn.close()

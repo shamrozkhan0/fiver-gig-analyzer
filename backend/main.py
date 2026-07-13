@@ -49,7 +49,7 @@ def login_user(user: User, response: Response):
     response.set_cookie(
         key="jwt_token",
         value=token,
-        # domain=f"{os.getenv('FRONTEND_URL')}",
+        # domain=f"{os.getenv('FRONTEND_URL')}", # it runs on local store
         httponly=True,
         secure=False,
         samesite="lax",
@@ -92,7 +92,6 @@ def save_content(data: Data, jwt_token: str = Cookie()):
 class ContentRequest(BaseModel):
     user_id:int
     content_id:int
-
 
 @app.get("/getcontent/{user_id}/{content_id}")
 def get_content(user_id:int, content_id:int,jwt_token=Cookie(...)):

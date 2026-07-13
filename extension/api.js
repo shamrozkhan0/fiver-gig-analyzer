@@ -1,7 +1,15 @@
 const WEB_URL = "http://localhost:5173/"
 const BACKEND_URL = "http://localhost:8000/"
 
-console.log("Popup loaded");
+
+// This gets 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "SCRAPPED_DATA") {
+        console.log("bg js:",message.data);
+    }
+});
+
+
 
 
 async function isFiverTab() {
@@ -117,16 +125,34 @@ const showScrapper = () => {
 
   // Scrapped Button 
   document.getElementById("btn").addEventListener("click", async () => {
-    let isScrapped = await startScrapping()
-    console.log("content is scrapped", isScrapped)
-    if (isScrapped.status){
-      let url = WEB_URL + isScrapped.user_id + "/" + isScrapped.content_id
-      console.log(url)
-     setTimeout(()=>{
-      //  chrome.tabs.create({ url: url }); 
-     },3200)
+    try{
+      console.log("button is clicked")
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      });
+
+      await chrome.scripting.executeScript({
+        target: {tabId: tab.id},
+        files : ["dist/scrapper.js"]
+      })      
     }
+    
+    catch(error){
+      console.error("Error: ", error)
+    }
+
+    // console.log("content is scrapped", isScrapped)
+    // if (isScrapped.status){
+    //   let url = WEB_URL + isScrapped.user_id + "/" + isScrapped.content_id
+    //   console.log(url)
+    //  setTimeout(()=>{
+    //   //  chrome.tabs.create({ url: url }); 
+    //  },3200)
+    // }
   });
+
+
 
 
 

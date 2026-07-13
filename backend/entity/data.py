@@ -1,12 +1,8 @@
-import json
-
 from pydantic import BaseModel
+from typing import Any
 import logging as log
 
-from rich.json import JSON
-
 log.basicConfig(level=log.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",)
-
 
 class Expertise(BaseModel):
     items: list[str]
@@ -22,7 +18,7 @@ class Data(BaseModel):
     packages: str
     tags: str
     profile_description:str
-    ratings: str
-    total_review: str
-    gig_stars: str
+    ratings: list[dict[str,float]]
+    total_review: int
+    gig_stars: dict[str, Any]
     about_profile: str

@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "build": "esbuild src/scrapper.js --bundle --outfile=dist/scrapper.js"
+  },
+  "dependencies": {
+    "turndown": "^7.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
