@@ -1,4 +1,18 @@
-import { getTitle, getDescription, getCategoryAndSubcategory, getExpertise, getPackage, getSellerProfile, getTags, getRatings, getSellerInfo, getStarsReviews, getGigUrl, getProfileStatus, getTotalOrders} from "./gig"
+import {
+    getTitle,
+    getDescription,
+    getCategoryAndSubcategory, 
+    getExpertise, 
+    getPackage, 
+    getSellerProfile, 
+    getTags, 
+    getRatings, 
+    getSellerInfo, 
+    getStarsReviews, 
+    getGigUrl, 
+    getProfileStatus,
+    getTotalOrders} from "./gig"
+
 
 function scrapper() {
     console.log("scrapper runs")
@@ -19,6 +33,7 @@ function scrapper() {
     }
     return data
 }
+
 
 
 (() => {

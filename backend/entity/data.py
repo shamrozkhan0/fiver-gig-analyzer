@@ -33,3 +33,5 @@ class Data(BaseModel):
     total_orders: int
     gig_stars: dict[str, Any] | str
     seller_information: dict[str, str]
+
+# poetry run python -m uvicorn main:app --reload
