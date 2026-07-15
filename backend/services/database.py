@@ -147,9 +147,11 @@ class Database:
 
 
     def setContent(self, data, email):
-        table_query = f"""CREATE TABLE data (
+        table_query = """CREATE TABLE data (
             content_id INT PRIMARY KEY AUTO_INCREMENT,
             profile_id INT NOT NULL,
+            url VARCHAR(150) NOT NULL,
+            seller_status VARCHAR(10),
             title VARCHAR(255) NOT NULL,
             description TEXT NOT NULL,
             expertise JSON NOT NULL,
@@ -157,15 +159,17 @@ class Database:
             packages JSON NOT NULL,
             tags TEXT NOT NULL,
             profile_description TEXT NOT NULL,
-            ratings json,
-            total_review INT,
+            ratings JSON,
+            total_orders INT,
             gig_stars JSON,
             about_profile JSON NOT NULL,
             FOREIGN KEY (profile_id) REFERENCES user(id)
-            )"""
+        )"""
 
         insert_content_query = f"""INSERT INTO {self.data_table_name} (
                 profile_id,
+                url,
+                seller_status,
                 title,
                 description,
                 expertise,
@@ -174,10 +178,10 @@ class Database:
                 tags,
                 profile_description,
                 ratings,
-                total_review,
+                total_orders,
                 gig_stars,
                 about_profile 
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
 
         try:
             conn = self._connect_with_database();
@@ -189,10 +193,33 @@ class Database:
 
                 log.info("Inserting gig data into database")
                 profile_id = self.get_id_by_email(email)
+                print(data.ratings)
 
-                cursor.execute(insert_content_query, (profile_id, data.title, data.description, json.dumps([e.model_dump() for e in  data.expertise]), data.category_and_subcategory,
-                                                      data.packages, data.tags, data.profile_description, json.dumps(data.ratings), data.total_review,
-                                                      json.dumps(data.gig_stars), data.about_profile))
+                if type(data.ratings) == str:
+                    data.ratings = {"message": data.ratings}
+
+                if type(data.gig_stars) == str:
+                    data.gig_stars = {"message": data.gig_stars}
+
+                cursor.execute(
+                    insert_content_query,
+                    (
+                        profile_id,
+                        data.url,
+                        data.seller_status,
+                        data.title,
+                        data.description,
+                        json.dumps([e.model_dump() for e in data.expertise]),
+                        data.category_and_subcategory,
+                        json.dumps({k: v.model_dump() for k, v in data.packages.items()}),
+                        data.tags,
+                        data.profile_description,
+                        json.dumps(data.ratings),
+                        data.total_orders,
+                        json.dumps(data.gig_stars),
+                        json.dumps(data.seller_information)
+                    )
+                )
                 conn.commit()
                 content_id = cursor.lastrowid
             conn.close()

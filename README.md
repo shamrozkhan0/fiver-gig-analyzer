@@ -22,5 +22,3 @@ for your gig to get rank and attract clients.
 ![Login Page](public/login.png)
 ![Editor Page](public/editor-image.png)
 ![Analyzer Page](public/analyzer.png)
-
-

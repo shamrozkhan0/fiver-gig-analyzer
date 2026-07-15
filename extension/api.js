@@ -1,16 +1,62 @@
 const WEB_URL = "http://localhost:5173/"
 const BACKEND_URL = "http://localhost:8000/"
 
+async function senddata(data){
+    const BACKEND_SAVE_DATA_URL = "http://localhost:8000/savecontent"
+    console.log(data)
 
-// This gets 
+     const response = await fetch(BACKEND_SAVE_DATA_URL, {
+            method: "post",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                url: data.gig_url,
+                seller_status: data.seller_status,
+                title: data.title,
+                description: data.gig_description,
+                expertise: data.expertise,
+                category_and_subcategory: data.gig_category,
+                packages: data.packages,
+                tags: data.tags,
+                profile_description: data.seller_profile_description,
+                ratings: data.ratings,
+                total_orders: data.total_orders,
+                gig_stars: data.total_stars,
+                seller_information: data.seller_information,
+            })
+
+        })
+    console.log("is response ok? ",response.ok)
+    console.log(response)
+}
+
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "SCRAPPED_DATA") {
         console.log("bg js:",message.data);
+        senddata(message.data)
     }
 });
 
 
+function showModal(message, isSucess) {
+    const modal = document.querySelector("div.alert-modal")
+    if (isSucess) {
+        modal.classList.remove("d-none")
+        modal.classList.add("message")
+        modal.querySelector("p.alert-modal-text").textContent = message
+    } else {
+        console.log("modal show red")
+    }
 
+    setTimeout(() => {
+        modal.classList.add("d-none")
+        modal.classList.remove("message")
+        return true
+    }, 3200)
+}
 
 async function isFiverTab() {
 
