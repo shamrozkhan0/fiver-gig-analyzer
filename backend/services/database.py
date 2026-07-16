@@ -239,7 +239,6 @@ class Database:
         with conn.cursor(pymysql.cursors.DictCursor) as cursor:
             cursor.execute(get_user_id_by_email_query, (email,))
             original_content_user_id = cursor.fetchone()
-            print(original_content_user_id["id"])
 
             if not original_content_user_id["id"] == user_id:
                 return {"success": False, "message": "You are not The Owner"}

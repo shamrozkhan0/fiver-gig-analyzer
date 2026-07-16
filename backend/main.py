@@ -2,7 +2,7 @@ from fastapi import FastAPI, Response, Cookie, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from services.jwt_token import verify_jwt
 from services.database import Database
-from ai.analyzer import get_response
+from ai.analyzer import Analyzer
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from entity.data import Data
@@ -89,9 +89,11 @@ def save_content(data: Data, jwt_token: str = Cookie()):
     return {"status": True, "message": "Save successfully", "content_id": result["content_id"], "user_id": result["user_id"]}
 
 
+
 class ContentRequest(BaseModel):
     user_id:int
     content_id:int
+
 
 @app.get("/getcontent/{user_id}/{content_id}")
 def get_content(user_id:int, content_id:int,jwt_token=Cookie(...)):
@@ -101,7 +103,9 @@ def get_content(user_id:int, content_id:int,jwt_token=Cookie(...)):
     db = Database()
     content = db.get_content_by_id(request.user_id, request.content_id,email["email"])
     print("calling response")
-    result = get_response(content["message"])
+    # result = get_response(content["message"])
+    a = Analyzer(content["message"])
+    result = a.get_response()
     return result
 
 
