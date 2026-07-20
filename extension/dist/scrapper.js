@@ -667,19 +667,18 @@
   function getTitle() {
     const titleElement = document.querySelector("div.gig-overview h1");
     if (!titleElement) return emptyMessage;
-    console.log(titleElement.textContent.trim().toLowerCase().replace("i will", "").trim());
+    console.log("Title Done");
     return titleElement.textContent.trim().toLowerCase().replace("i will", "").trim();
   }
   function getDescription() {
     const description = document.querySelector("div.description-wrapper div.description-content") || document.querySelector("div.about-gig div.m2d0eb1cs");
     if (!description) return emptyMessage;
-    console.log(description.innerText);
-    return convertmd.turndown(description.innerHTML);
+    console.log("Description Done");
+    return convertmd.turndown(description.innerHTML).trim().replace(/\s+/g, " ");
   }
   function getCategoryAndSubcategory() {
     const breadcrumbElement = document.querySelector("ol.m2d0eb0");
     if (!breadcrumbElement) return emptyMessage;
-    console.log(breadcrumbElement.innerText);
     return breadcrumbElement.textContent.replaceAll("/", ">").trim();
   }
   function getExpertise() {
@@ -700,7 +699,7 @@
         }
       });
     }
-    console.log("expertise json: ", expertiesJson);
+    console.log("Expertise Done");
     return expertiesJson;
   }
   function getPackage() {
@@ -722,7 +721,7 @@
         };
       });
     } catch (e) {
-      console.log("Package extraction error:", e);
+      console.error("Package extraction error:", e);
     }
     const item = document.querySelector(".collapsable-package-item");
     const header = item?.querySelector(".collapsable-header");
@@ -730,15 +729,18 @@
       console.log("Section is closed \u2192 opening");
       header?.click();
     }
+    console.log("Package Done");
     return packages;
   }
   function getSellerProfile() {
     const profileElement = document.querySelector("article.seller-desc div.inner");
+    console.log("Seller Profile Done");
     return convertmd.turndown(profileElement.textContent.trim());
   }
   function getTags() {
     const tagsElement = document.querySelector("div.gig-tags-container ul");
     const tags = [...tagsElement.querySelectorAll(" li")].map((tag) => tag.innerText.trim()).join(", ");
+    console.log("Tags Done");
     return tags;
   }
   function getRatings() {
@@ -750,11 +752,13 @@
       let value = rating.querySelector("span").textContent.trim();
       rating_json.push({ [key]: parseFloat(value) });
     });
+    console.log("Ratings Done");
     return rating_json;
   }
   function getTotalOrders() {
     const totalReviewsElement = document.querySelector("header.reviews-header div.details span._1fe1trbk span");
     if (!totalReviewsElement) return 0;
+    console.log("Total Orders Done");
     return parseInt(totalReviewsElement.textContent.trim().replace(",", "").trim());
   }
   function getStarsReviews() {
@@ -764,6 +768,7 @@
     reviewsPerStar.forEach((el) => {
       starReviews[el.querySelector("span.stars-filter-wrapper").innerText.trim()] = el.querySelector("td.star-num").innerText.trim();
     });
+    console.log("Starts Reviews Done");
     return starReviews;
   }
   function getSellerInfo() {
@@ -772,23 +777,24 @@
     const sellerInfo = {};
     profileCredentials.forEach((el) => {
       const strong = el.querySelector("strong");
-      console.log(strong.innerHTML);
       if (!strong) return;
       const key = el.querySelector("p")?.innerText.trim() || el.textContent.replace(strong.textContent, "").trim();
       sellerInfo[key] = strong.textContent.trim();
-      console.log("bla", sellerInfo[key] = strong.textContent.trim());
     });
+    console.log("Seller Information Done");
     return sellerInfo;
   }
   function getGigUrl() {
     const url = new URL(window.location.href);
     url.search = "";
-    console.log(url.toString().length);
+    console.log("GigUrl Done");
     return url.toString();
   }
   function getProfileStatus() {
+    ``;
     const status = document.querySelector("div.seller-overview p.m2d0eb2");
     if (!status) return "fresher";
+    console.log("Profile Level Done");
     return status.textContent.trim();
   }
 

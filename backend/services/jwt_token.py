@@ -1,9 +1,8 @@
-
 from fastapi import HTTPException
 from dotenv import load_dotenv
 from jwt import ExpiredSignatureError
 
-from entity.user import User
+from entity.authentication import LoginUser
 import datetime
 import logging as log
 import jwt
@@ -13,7 +12,7 @@ load_dotenv()
 log.basicConfig(level=log.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",)
 
 
-def create_token(user: User):
+def create_token(user: LoginUser):
     secret_key = os.getenv("JWT_SECRET_KEY")
     algorithm = os.getenv("JWT_ALGORITHM")
 

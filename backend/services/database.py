@@ -4,7 +4,7 @@ from xml.sax.handler import property_interning_dict
 
 from services.jwt_token import create_token
 from dotenv import load_dotenv
-from entity.user import User
+from entity.authentication import SignupUser
 import logging as log
 from os import getenv
 import pymysql
@@ -52,17 +52,25 @@ class Database:
         with conn.cursor() as cursor:
             cursor.execute(verify_user_query, (email,))
             is_exist = cursor.fetchone()
-            print("is exist: ",is_exist[0])
             return is_exist[0]
 
 
-    def register_user(self, user : User):
+    def check_if_username_exist_in_database(self, conn, username):
+        query = f""" SELECT EXISTS(SELECT 1 FROM {self.auth_table_name} WHERE username = %s) AS username_exists """
+        with conn.cursor() as cursor:
+            cursor.execute(query, (username,))
+            is_exist = cursor.fetchone()
+            return is_exist[0]
+
+
+    def register_user(self, user : SignupUser):
         create_table_query = f"""CREATE TABLE {self.auth_table_name} (
                                 id INT PRIMARY KEY AUTO_INCREMENT,
+                                username VARCHAR(15) UNIQUE NOT NULL,
                                 email VARCHAR(50) UNIQUE NOT NULL,
                                 password VARCHAR(20) NOT NULL
                                 )"""
-        register_user_query = f"""INSERT INTO {self.auth_table_name} (email, password) VALUES (%s, %s)"""
+        register_user_query = f"""INSERT INTO {self.auth_table_name} (username, email, password) VALUES (%s, %s, %s)"""
         try:
             database_connection = self._connect_with_database()
 
@@ -79,9 +87,16 @@ class Database:
                         "message": f"User with email {user.email} already exist."
                     }
 
+                if self.check_if_username_exist_in_database(database_connection, user.username):
+                    return {
+                        "success": False,
+                        "message": f"Username already exist try a different username"
+                    }
+
                 cursor.execute(
                     register_user_query,
                     (
+                        user.username,
                         user.email,
                         user.password,
                 ))
@@ -110,7 +125,7 @@ class Database:
                 print("User not exist")
                 return {
                     "status": False,
-                    "message": f"User with email: {user.email} doesn't exist"
+                    "message": f"User with email {user.email} doesn't exist"
                 }
 
             with conn.cursor() as cursor:

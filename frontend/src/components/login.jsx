@@ -1,30 +1,41 @@
 import logo from "../../images/gigBro-logo.png"
 import { useNavigate } from "react-router-dom"
+import { useNotification } from "../../context/NotificationContext";
 import { useState } from "react"
 
-const Login = () => {
-  const my_navigate = useNavigate();
 
-  const [email, setEmail] = useState(null)
-  const [password, setPassword] = useState(null)
+const Login = () => {
   const logniURL = import.meta.env.VITE_BACKEND_URL + "login"
 
-  const submitForm = async (e) => {
-    e.preventDefault()
+  const { showNotification } = useNotification()
+  const [password, setPassword] = useState(null)
+  const [email, setEmail] = useState(null)
+  const my_navigate = useNavigate();
 
-    await fetch(logniURL, {
+
+  const submitForm = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch(logniURL, {
       method: "POST",
       credentials: "include",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: email,
-        password: password
-      })
-    })
-    navigate("/")
-  }
+        email,
+        password,
+      }),
+    });  
+
+    const data = await response.json();
+
+    showNotification({
+      success: data.success,
+      message: data.message,
+    });
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -86,22 +97,22 @@ const Login = () => {
               Forgot password?
             </a> */}
 
-                 <p className="text-right text-sm text-gray-500">
-            Already have an account?{" "}
-            <button type="button" onClick={() => my_navigate("/signup")} className="cursor-pointer font-bold text-slate-800 hover:text-emerald-600">
-              Sign Up
-            </button>
-          </p>
+            <p className="text-right text-sm text-gray-500">
+              Already have an account?{" "}
+              <button type="button" onClick={() => my_navigate("/signup")} className="cursor-pointer font-bold text-slate-800 hover:text-emerald-600">
+                Sign Up
+              </button>
+            </p>
           </div>
 
           {/* Button */}
-    <button
-      type="submit"
-      
-      className="w-full bg-fiver-green hover:bg-red-500 text-white font-semibold py-2 rounded-lg transition"
-    >
-      Login
-    </button>
+          <button
+            type="submit"
+
+            className="w-full bg-fiver-green hover:bg-red-500 text-white font-semibold py-2 rounded-lg transition"
+          >
+            Login
+          </button>
         </form>
       </div>
     </div>

@@ -1,13 +1,13 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import GigBroLogo from "../../images/gigBro-logo.png"
-
+import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../context/NotificationContext";
 import { useState } from "react";
 
 const Signup = () => {
-  const my_navigate = useNavigate();
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
   const backendSignupURL = import.meta.env.VITE_BACKEND_URL + "signup"
+
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const {showNotification} = useNotification()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -16,7 +16,6 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup data:", form);
 
     const response = await fetch(backendSignupURL, {
         method: "post",
@@ -25,14 +24,21 @@ const Signup = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          email: form["email"],
-          password: form["password"]
+          username: form.username,
+          email: form.email,
+          password: form.password
         })
-    }).then(res => {
-        if (res.ok){
-          navigate("/")
-        }}
-    )
+    })
+
+
+    const data = await response.json()
+    console.log(data)
+
+    showNotification({
+      success: data.success,
+      message: data.message
+    })
+
   };
 
   return (
@@ -56,54 +62,72 @@ const Signup = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-semibold text-slate-800 mb-1.5"
-            >
-              Username
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label
+                htmlFor="username"
+                className="block text-sm font-semibold text-slate-800"
+              >
+                Username
+              </label>
+              <span className="text-xs text-gray-400">
+                {form.username.length}/15
+              </span>
+            </div>
             <input
               id="username"
               name="username"
               type="text"
               value={form.username}
               onChange={handleChange}
+              maxLength={15}
               placeholder="Choose a username"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-semibold text-slate-800 mb-1.5"
-            >
-              Email
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label
+                htmlFor="email"
+                className="block text-sm font-semibold text-slate-800"
+              >
+                Email
+              </label>
+              <span className="text-xs text-gray-400">
+                {form.email.length}/50
+              </span>
+            </div>
             <input
               id="email"
               name="email"
               type="email"
               value={form.email}
               onChange={handleChange}
+              maxLength={50}
               placeholder="Enter your email"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
             />
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-semibold text-slate-800 mb-1.5"
-            >
-              Password
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label
+                htmlFor="password"
+                className="block text-sm font-semibold text-slate-800"
+              >
+                Password
+              </label>
+              <span className="text-xs text-gray-400">
+                {form.password.length}/20
+              </span>
+            </div>
             <input
               id="password"
               name="password"
               type="password"
               value={form.password}
               onChange={handleChange}
+              maxLength={20}
               placeholder="Enter your password"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
             />
@@ -112,7 +136,7 @@ const Signup = () => {
           {/* Link back to login */}
           <p className="text-right text-sm text-gray-500">
             Already have an account?{" "}
-            <button type="button" onClick={() => my_navigate("/login")} className="cursor-pointer font-bold text-slate-800 hover:text-emerald-600">
+            <button type="button" onClick={() => navigate("/login")} className="cursor-pointer font-bold text-slate-800 hover:text-emerald-600">
               Login
             </button>
           </p>

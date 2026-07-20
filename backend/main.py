@@ -6,7 +6,7 @@ from ai.analyzer import Analyzer
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from entity.data import Data
-from entity.user import User
+from entity.authentication import LoginUser, SignupUser
 import logging as log
 import pymysql
 import os
@@ -29,34 +29,35 @@ log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename
 
 
 @app.post("/signup")
-def register_user(user: User ):
-        db = Database()
-        response = db.register_user(user)
-        print("response: ", response )
-        if response["success"]:
-            return {"status": 200, "message": response["message"] }
-        raise HTTPException(status_code=400, detail=response["message"])
+def register_user(user: SignupUser):
+    db = Database()
+    response = db.register_user(user)
+    return response
+    # if response["success"]:
+    #     return {"status": 200, "message": response["message"] }
+    # raise HTTPException(status_code=400, detail=response["message"])
 
 
 @app.post("/login")
-def login_user(user: User, response: Response):
+def login_user(user: LoginUser, response: Response):
     log.info("| Reviewed Login request")
     db = Database()
     result = db.verify_user(user)
-    print("result: ", result)
 
-    token = result["token"]
+    if result["status"] == False:
+        print(result)
+        return result
 
     response.set_cookie(
         key="jwt_token",
-        value=token,
+        value= result["token"],
         # domain=f"{os.getenv('FRONTEND_URL')}", # it runs on local store
         httponly=True,
         secure=False,
         samesite="lax",
         max_age= 60 * 60 * 24 * 1
     )
-    return {"status" : True, "message": "Login Completed"}
+    return result
 
 
 @app.get("/me")
@@ -95,7 +96,6 @@ class ContentRequest(BaseModel):
     user_id:int
     content_id:int
 
-
 @app.get("/getcontent/{user_id}/{content_id}")
 def get_content(user_id:int, content_id:int,jwt_token=Cookie(...)):
     email = verify_jwt(jwt_token)
@@ -104,7 +104,6 @@ def get_content(user_id:int, content_id:int,jwt_token=Cookie(...)):
     db = Database()
     content = db.get_content_by_id(request.user_id, request.content_id,email["email"])
     print("calling response")
-    # result = get_response(content["message"])
     a = Analyzer(content["message"])
     result = a.get_response()
     return result

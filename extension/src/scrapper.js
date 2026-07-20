@@ -49,5 +49,4 @@ function scrapper() {
 
 
 //                 const safeStyle = (el, color = "#00ff43") => { if (el) el.style.background = color }
-//                 const safeText = (el) => { return el ? el.innerText.trim().replace(/\s+/g, " ") : "Not Found in Gig" }
 
