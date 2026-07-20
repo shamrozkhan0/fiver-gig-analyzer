@@ -124,7 +124,6 @@ sections that cannot be assessed, as described above.
 {
   "meta": {
     "gig_url": "string | null",
-    "analyzed_at": "ISO 8601 timestamp",
     "seller_status": "string | null",
     "category": "string | null",
     "subcategory": "string | null"

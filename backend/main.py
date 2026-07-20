@@ -18,11 +18,12 @@ load_dotenv()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL"), os.getenv("EXTENSION_ID")],           # Allows requests from specified origins
-    allow_credentials=True,         # Allows cookies and credentials (e.g., Authorization headers)
-    allow_methods=["*"],            # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],            # Allows all request headers
+    allow_origins=[os.getenv("FRONTEND_URL"), os.getenv("EXTENSION_ID")],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 log.basicConfig(level=log.INFO, format='%(asctime)s - %(levelname)s - %(filename)s - %(message)s',)
 
@@ -109,8 +110,6 @@ def get_content(user_id:int, content_id:int,jwt_token=Cookie(...)):
     return result
 
 
-
-# For testing
 @app.get("/get")
 def analyze():
     query = f""" SELECT * FROM data"""

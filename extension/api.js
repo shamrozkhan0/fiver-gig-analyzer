@@ -118,6 +118,7 @@ async function logout() {
 }
 
 
+// This function inject's login HTML in the extension if user is not login
 const showLogin = () => {
   const container = document.querySelector("div.container").innerHTML = loginHTML;
 
@@ -138,6 +139,8 @@ const showLogin = () => {
 };
 
 
+
+// This function inject's scrapper HTML in the extension if user is login
 const showScrapper = () => {
   const container = document.querySelector("div.container div.wrapper");
 
@@ -171,10 +174,6 @@ const showScrapper = () => {
     //  },3200)
     // }
   });
-
-
-
-
 
   // Logout Button
   document.getElementById("logout").addEventListener("click", () => {
