@@ -1,4 +1,4 @@
-import logo from "../../images/gigBro-logo.png"
+import logo from "../images/gigBro-logo.png"
 import { useNavigate } from "react-router-dom"
 import { useNotification } from "../../context/NotificationContext";
 import { useState } from "react"
@@ -29,6 +29,7 @@ const Login = () => {
     });  
 
     const data = await response.json();
+    console.log(data)
 
     showNotification({
       success: data.success,

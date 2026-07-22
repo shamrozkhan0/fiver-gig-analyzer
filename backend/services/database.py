@@ -1,13 +1,11 @@
-import json
-from email import message_from_binary_file
-from xml.sax.handler import property_interning_dict
-
 from services.jwt_token import create_token
-from dotenv import load_dotenv
 from entity.authentication import SignupUser
+from dotenv import load_dotenv
 import logging as log
 from os import getenv
 import pymysql
+import json
+
 
 load_dotenv()
 log.basicConfig(level=log.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",)
@@ -122,9 +120,8 @@ class Database:
         try:
             conn = self._connect_with_database()
             if not self.check_if_user_exist_by_email(conn, user.email):
-                print("User not exist")
                 return {
-                    "status": False,
+                    "success": False,
                     "message": f"User with email {user.email} doesn't exist"
                 }
 
@@ -136,13 +133,13 @@ class Database:
 
                 if user.password == password:
                     return {
-                        "status": True,
+                        "success": True,
                         "message": "Login Successfully",
                         "token": jwt_token
                     }
 
                 return {
-                    "status": False,
+                    "success": False,
                     "message": "Email or password is incorrect."
                 }
 

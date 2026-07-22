@@ -1,26 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Signup from "./components/signup.jsx"
-import Analyzer from './components/analyzer.jsx'
-import Login from "./components/login.jsx"
-import Auth from "./layouts/auth"
-
-import './App.css'
-
+import LandingPage from "./pages/LandingPage.jsx"
+import Dashboard from "./pages/Dashboard.jsx"
+import Signup from "./components/Signup.jsx"
+import Login from "./components/Login.jsx"
+import Auth from "./pages/Auth.jsx"
+import "./App.css"
 
 function App() {
   return (
     <>
-
       <BrowserRouter>
-        <Routes>
-          {/* <Route path="/:user_id/:content_id" element={<Editor />} /> */}
-          {/* <Route path="/" element={<Editor />} /> */}
-          
-          <Route path="/" element={<Analyzer />} />
-
-
-
-          <Route element={<Auth />}>
+        <Routes>          
+          <Route path="/" element={<LandingPage />} />
+          <Route element={<Auth/>}>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Route>
@@ -31,4 +23,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

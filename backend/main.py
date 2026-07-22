@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Response, Cookie, HTTPException
+from entity.authentication import LoginUser, SignupUser
 from fastapi.middleware.cors import CORSMiddleware
 from services.jwt_token import verify_jwt
 from services.database import Database
@@ -6,7 +7,6 @@ from ai.analyzer import Analyzer
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from entity.data import Data
-from entity.authentication import LoginUser, SignupUser
 import logging as log
 import pymysql
 import os
@@ -33,9 +33,6 @@ def register_user(user: SignupUser):
     db = Database()
     response = db.register_user(user)
     return response
-    # if response["success"]:
-    #     return {"status": 200, "message": response["message"] }
-    # raise HTTPException(status_code=400, detail=response["message"])
 
 
 @app.post("/login")
@@ -44,7 +41,7 @@ def login_user(user: LoginUser, response: Response):
     db = Database()
     result = db.verify_user(user)
 
-    if result["status"] == False:
+    if result["success"] == False:
         print(result)
         return result
 
@@ -79,16 +76,12 @@ def logout(response: Response):
 
 @app.post("/savecontent")
 def save_content(data: Data, jwt_token: str = Cookie()):
-    print("saving data")
     if not jwt_token:
         raise HTTPException(401, "Token not found")
     user = verify_jwt(jwt_token)
-    print(user["email"])
     db = Database()
     result = db.setContent(data, user["email"])
-    if not result:
-        raise HTTPException(401, "| Error: saving gig content")
-    return {"status": True, "message": "Save successfully", "content_id": result["content_id"], "user_id": result["user_id"]}
+    return {"success": True, "message": "Save successfully", "content_id": result["content_id"], "user_id": result["user_id"]}
 
 
 

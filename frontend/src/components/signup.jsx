@@ -1,4 +1,4 @@
-import GigBroLogo from "../../images/gigBro-logo.png"
+import GigBroLogo from "../images/gigBro-logo.png"
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationContext";
 import { useState } from "react";
