@@ -1,4 +1,4 @@
-import GigBroLogo from "../images/gigBro-logo.png"
+import GigBroLogo from "../images/logo.png"
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationContext";
 import { useState } from "react";
@@ -46,8 +46,8 @@ const Signup = () => {
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-6 sm:p-8">
         {/* Logo badge - responsive, scales with the card */}
         <div className="flex justify-center mb-5">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-full bg-emerald-500 flex flex-col items-center justify-center text-white shrink-0">
-            <img src={GigBroLogo} alt="" className="rounded-full" />
+          <div className="w-20 h-20 sm:w-20 sm:h-20 aspect-square rounded-full bg-emerald-500 flex flex-col items-center justify-center text-white shrink-0">
+            <img src={GigBroLogo} alt="GigBro Logo"/>
           </div>
         </div>
 

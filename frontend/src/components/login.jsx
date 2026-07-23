@@ -1,12 +1,11 @@
-import logo from "../images/gigBro-logo.png"
+import GigBroLogo from "../images/logo.png"
 import { useNavigate } from "react-router-dom"
 import { useNotification } from "../../context/NotificationContext";
 import { useState } from "react"
 
-
 const Login = () => {
   const logniURL = import.meta.env.VITE_BACKEND_URL + "login"
-
+  console.log(GigBroLogo)
   const { showNotification } = useNotification()
   const [password, setPassword] = useState(null)
   const [email, setEmail] = useState(null)
@@ -47,7 +46,7 @@ const Login = () => {
         {/* Logo */}
         <div className="flex flex-col items-center">
           <div className="w-20 h-20 rounded-full  flex items-center justify-center shadow-md">
-            <img src={logo} alt="GigBro login" className="rounded-full" />
+            <img src={GigBroLogo} alt="GigBro login"/>
           </div>
 
           <h1 className="mt-4 text-2xl font-bold text-gray-800">
