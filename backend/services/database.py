@@ -1,5 +1,5 @@
-from services.jwt_token import create_token
 from entity.authentication import SignupUser
+from services.jwt_token import create_token
 from dotenv import load_dotenv
 import logging as log
 from os import getenv

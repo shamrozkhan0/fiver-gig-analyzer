@@ -71,7 +71,8 @@ for your gig to get rank and attract clients.
 ![System Flow Diagram](public/System-flow.png)
 
 ### Visuals:
-![GigBro Logo](public/gigBro-logo.jpeg)
+![GigBro Logo](public/gig-logo.png)
+![Landing Page](public/landingpage.png)
 ![Login Page](public/auth.png)
 ![Analyzer Page](public/analyzer.jpeg)
 
