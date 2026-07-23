@@ -7,10 +7,12 @@ import Faq from "../components/Faq.jsx"
 import WhyGigBro from "../components/WhyGigBro.jsx"
 import CTA from "../components/CTA.jsx"
 import Footer from "../components/Footer.jsx"
+import BackendNotification from "../components/BackendNotification.jsx"
 
 const LandingPage = () => {
     return (
         <>
+            <BackendNotification/>
             <Navbar/>
             <HeroSection/>
             <ProblemSection/>
