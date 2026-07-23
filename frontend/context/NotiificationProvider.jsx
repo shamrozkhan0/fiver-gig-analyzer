@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NotificationContext } from './NotificationContext';
-import Notification from '../src/utils/notification';
+import Notification from '../src/utils/Notification';
 
 export function NotificationProvider({ children }) {
   const [notification, setNotification] = useState({ show: false, success: true, message: "" });
